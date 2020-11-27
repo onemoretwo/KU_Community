@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                             pDialog.dismiss();
                             new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
                                     .setTitleText("เข้าสู่ระบบไม่สำเร็จ")
-                                    .setContentText("กรุณากรอกข้อมูลใหม่!")
+                                    .setContentText("ไม่พบบัญชีผู้ใช้ในระบบ!")
                                     .show();
                             // ...
                         }
