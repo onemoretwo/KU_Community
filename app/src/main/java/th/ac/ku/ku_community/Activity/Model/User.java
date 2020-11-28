@@ -1,10 +1,9 @@
-package th.ac.ku.ku_community.Model;
+package th.ac.ku.ku_community.Activity.Model;
 
 public class User {
     private String id;
     private String name;
     private String email;
-    private String password;
     private String faculty;
     private String major;
     private String img;
@@ -12,11 +11,10 @@ public class User {
 
     public User(){}
 
-    public User(String id, String name, String email, String password, String faculty, String major, String img, String created_at) {
+    public User(String id, String name, String email, String faculty, String major, String img, String created_at) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
         this.faculty = faculty;
         this.major = major;
         this.img = img;
@@ -33,10 +31,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getFaculty() {

@@ -20,7 +20,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import th.ac.ku.ku_community.Activity.Model.User;
 import th.ac.ku.ku_community.R;
 
 
@@ -28,10 +32,13 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
 
+    DatabaseReference userDB;
+
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
+    private CircleImageView navProfileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +47,20 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        userDB = FirebaseDatabase.getInstance().getReference("users");
+
         mToolbar = findViewById(R.id.nav_action);
+        mToolbar.setTitle("APP FEED");
         setSupportActionBar(mToolbar);
         drawerLayout = findViewById(R.id.drawerLayout);
         mToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        navigationView = findViewById(R.id.navigation_view);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView = findViewById(R.id.navigation_view);
+
+        View navView = navigationView.inflateHeaderView(R.layout.navigation_header);
+        navProfileImage = navView.findViewById(R.id.navProfileImage);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -69,25 +82,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        myRef.setValue("Hello, Java!");
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        userDB.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("ii", "Value is: " + value);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if (user.getImg() != null){
+                    Picasso.get().load("http://i.imgur.com/DvpvklR.png").placeholder(R.drawable.profile).error(R.drawable.profile).into(navProfileImage);
+                }
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("ii", "Failed to read value.", error.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -124,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToProfileActivity(){
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
         startActivity(intent);
     }
 

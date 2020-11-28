@@ -14,14 +14,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Calendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import th.ac.ku.ku_community.Activity.Model.User;
 import th.ac.ku.ku_community.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+
+    private DatabaseReference userDB;
 
     private EditText registerEmailField, registerIdField, registerPasswordField, registerConfirmPasswordField;
 
@@ -32,6 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        userDB = FirebaseDatabase.getInstance().getReference("users");
+
         registerEmailField = findViewById(R.id.registerEmailField);
         registerIdField = findViewById(R.id.registerIdField);
         registerPasswordField = findViewById(R.id.registerPasswordField);
@@ -40,8 +48,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void handleRegisterSubmitBtn(View view) {
 
-        String email = registerEmailField.getText().toString().trim();
-        String id = registerIdField.getText().toString().trim();
+        final String email = registerEmailField.getText().toString().trim();
+        final String id = registerIdField.getText().toString().trim();
         String password = registerPasswordField.getText().toString().trim();
         String confirmPassword = registerConfirmPasswordField.getText().toString().trim();
 
@@ -65,6 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            User registeredUser = new User(id, null, email, null, null, null, Calendar.getInstance().getTime().toString());
+
+                            userDB.child(mAuth.getCurrentUser().getUid()).setValue(registeredUser);
                             // go to home
                             pDialog.dismiss();
                             goToHome();
