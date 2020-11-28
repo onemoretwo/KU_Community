@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void goToHome(){
         Intent homeIntent = new Intent(RegisterActivity.this, MainActivity.class);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(homeIntent);
-        finish();
     }
 }
